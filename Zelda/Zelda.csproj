@@ -14,6 +14,10 @@
   <ItemGroup>
     <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.*" />
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.*" />
+	<Content Include="Content\gameMap.txt">
+		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		<Link>gameMap.txt</Link>
+		</Content>
   </ItemGroup>
 	<PropertyGroup>
 		<MonoGameExtendedPipelineReferencePath>$(MSBuildThisFileDirectory)pipeline-references</MonoGameExtendedPipelineReferencePath>
