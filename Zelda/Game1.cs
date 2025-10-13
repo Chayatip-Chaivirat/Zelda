@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.IO;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Zelda
 {
@@ -8,6 +10,12 @@ namespace Zelda
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+        string mapText;
+
+        //======== Enemy ========
+        Enemy enemy;
+        Vector2 enemyPos;
+        Rectangle enemyRec;
 
         public Game1()
         {
@@ -26,8 +34,15 @@ namespace Zelda
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+            TextureManager.Textures(Content);
 
-            // TODO: use this.Content to load your game content here
+            //StreamReader sr = new StreamReader(@"gameMap.txt");
+            //mapText = sr.ReadLine();
+            //sr.Close();
+
+            enemyPos = new Vector2 (0,0);
+            enemyRec = new Rectangle(0,0,39,39);
+            enemy = new Enemy(TextureManager.enemyTex, enemyPos, enemyRec);
         }
 
         protected override void Update(GameTime gameTime)
@@ -35,9 +50,6 @@ namespace Zelda
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            TextureManager.Textures(Content);
-
-            // TODO: Add your update logic here
 
             base.Update(gameTime);
         }
@@ -46,7 +58,11 @@ namespace Zelda
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            _spriteBatch.Begin();
+
+            enemy.Draw(_spriteBatch);
+
+            _spriteBatch.End();
 
             base.Draw(gameTime);
         }
