@@ -9,7 +9,7 @@ namespace Zelda
     {
         public Texture2D playerTex;
         public Vector2 position;
-        public Rectangle playerRec = new Rectangle(0, 0, 39, 41);
+        public Rectangle playerRec = new Rectangle(0, 40, 39, 41);
         int lives = 10;
         public bool keyRetrieved = false; // Maybe in another class???
         public bool attacking = false;
@@ -21,6 +21,7 @@ namespace Zelda
         }
         public void playerMovement()
         {
+
             KeyboardState state = Keyboard.GetState();
 
             if(state.IsKeyDown(Keys.A) || state.IsKeyDown(Keys.Left))
@@ -41,23 +42,30 @@ namespace Zelda
             }
             if (!attacking && state.IsKeyDown(Keys.Space) || Mouse.GetState().LeftButton == ButtonState.Pressed)
             {
-                //PlayerAttack();
-                //PlayerDefault();
-                //float attackCoolDown = 1.0f;
-                //float attackTimer = 0.0f;
-                //if (attackTimer < attackCoolDown)
+                //attacking = true;
+                //if (attacking)
                 //{
                 //    PlayerAttack();
+                //    attacking = false;
                 //}
                 //else
                 //{
                 //    PlayerDefault();
                 //}
+
+                float attackCoolDown = 1.0f;
+                float attackTimer = 0.0f;
                 attacking = true;
-                if (attacking)
+
+                if (attacking == true && attackTimer < attackCoolDown)
                 {
                     PlayerAttack();
+                    attackTimer = 0;
                     attacking = false;
+                }
+                else
+                {
+                    PlayerDefault();
                 }
             }
         }
@@ -69,7 +77,7 @@ namespace Zelda
 
         public void PlayerDefault()
         {
-            playerRec = new Rectangle(0, 0, 39, 41); // player default animation
+            playerRec = new Rectangle(0, 40, 39, 41); // player default animation
         }
 
         public void Update()
