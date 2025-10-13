@@ -17,6 +17,11 @@ namespace Zelda
         Vector2 enemyPos;
         Rectangle enemyRec;
 
+        //======== Enemy ========
+        Player player;
+        Vector2 playerPos;
+        Rectangle playerRec;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -40,9 +45,14 @@ namespace Zelda
             //mapText = sr.ReadLine();
             //sr.Close();
 
+            //======== Enemy ========
             enemyPos = new Vector2 (0,0);
             enemyRec = new Rectangle(0,0,39,39);
             enemy = new Enemy(TextureManager.enemyTex, enemyPos, enemyRec);
+
+            //======== Player ========
+            playerPos = new Vector2(0,0);
+            player = new Player(TextureManager.playerTex, playerPos );
         }
 
         protected override void Update(GameTime gameTime)
@@ -50,7 +60,7 @@ namespace Zelda
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-
+            player.Update();
             base.Update(gameTime);
         }
 
@@ -60,7 +70,7 @@ namespace Zelda
 
             _spriteBatch.Begin();
 
-            enemy.Draw(_spriteBatch);
+            player.Draw(_spriteBatch);
 
             _spriteBatch.End();
 
