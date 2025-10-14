@@ -27,57 +27,60 @@ namespace Zelda
             if(state.IsKeyDown(Keys.A) || state.IsKeyDown(Keys.Left))
             {
                 position.X -= speed;
+                PlayerDefault();
             }
             if (state.IsKeyDown(Keys.D) || state.IsKeyDown(Keys.Right))
             {
                 position.X += speed;
+                PlayerDefault();
             }
             if (state.IsKeyDown(Keys.W) || state.IsKeyDown(Keys.Up))
             {
                 position.Y -= speed;
+                PlayerDefault();
             }
             if (state.IsKeyDown(Keys.S) || state.IsKeyDown(Keys.Down))
             {
                 position.Y += speed;
+                PlayerDefault();
             }
             if (!attacking && state.IsKeyDown(Keys.Space) || Mouse.GetState().LeftButton == ButtonState.Pressed)
             {
+                attacking = true;
+                PlayerAttack();
+
+                //float attackCoolDown = 1.0f;
+                //float attackTimer = 0.0f;
                 //attacking = true;
-                //if (attacking)
+
+                //if (attacking == true && attackTimer < attackCoolDown)
                 //{
                 //    PlayerAttack();
+                //    attackTimer = 0;
                 //    attacking = false;
                 //}
                 //else
                 //{
                 //    PlayerDefault();
                 //}
-
-                float attackCoolDown = 1.0f;
-                float attackTimer = 0.0f;
-                attacking = true;
-
-                if (attacking == true && attackTimer < attackCoolDown)
-                {
-                    PlayerAttack();
-                    attackTimer = 0;
-                    attacking = false;
-                }
-                else
-                {
-                    PlayerDefault();
-                }
             }
         }
-        public void PlayerAttack()
+        public bool PlayerAttack()
         {
-            playerRec = new Rectangle(0,118,39,41); //start the attack animation from here
-
+            if (attacking)
+            {
+                playerRec = new Rectangle(0,118,39,41); //start the attack animation from here
+            }
+            return attacking = false;
         }
 
         public void PlayerDefault()
         {
+            if (!attacking)
+            {
             playerRec = new Rectangle(0, 40, 39, 41); // player default animation
+            }
+
         }
 
         public void Update()
