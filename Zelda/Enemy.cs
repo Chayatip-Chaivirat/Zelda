@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Zelda
 {
-    internal class Enemy
+    public class Enemy
     {
         public Texture2D enemyTex;
         public Vector2 position;

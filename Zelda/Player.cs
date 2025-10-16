@@ -1,88 +1,102 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using SharpDX.DirectWrite;
-using System.Reflection.Metadata.Ecma335;
 namespace Zelda
 {
-    internal class Player
+    public class Player
     {
         public Texture2D playerTex;
         public Vector2 position;
-        public Rectangle playerRec = new Rectangle(0, 40, 39, 41);
-        int lives = 10;
+        public Rectangle playerRec;
+        public Rectangle playerHitbox;
+        public int lives = 10;
+        public Vector2 playerDirection;
+        public float speed;
+        public bool playerMoving;
+        public Vector2 playerDestination;
+
         public bool keyRetrieved = false; // Maybe in another class???
         public bool attacking = false;
-        public int speed = 2;
         public Player(Texture2D playerTex, Vector2 position)
         {
             this.playerTex = playerTex;
             this.position = position;
+            playerRec = new Rectangle(0, 0, 39, 41);
+            playerHitbox = new Rectangle(0, 0, 39, 41);
+            playerDirection = new Vector2(0, 0);
+            speed = 200;
+            playerMoving = false;
+            playerDestination = Vector2.Zero;
         }
-        public void playerMovement()
+        public void Update(GameTime gametime)
         {
+            KeyPlayerReader.Update();
+            attacking = false;
 
-            KeyboardState state = Keyboard.GetState();
-
-            if(state.IsKeyDown(Keys.A) || state.IsKeyDown(Keys.Left))
+            if (!playerMoving)
             {
-                position.X -= speed;
-            }
-            if (state.IsKeyDown(Keys.D) || state.IsKeyDown(Keys.Right))
-            {
-                position.X += speed;
-            }
-            if (state.IsKeyDown(Keys.W) || state.IsKeyDown(Keys.Up))
-            {
-                position.Y -= speed;
-            }
-            if (state.IsKeyDown(Keys.S) || state.IsKeyDown(Keys.Down))
-            {
-                position.Y += speed;
-            }
-            if (!attacking && state.IsKeyDown(Keys.Space) || Mouse.GetState().LeftButton == ButtonState.Pressed)
-            {
-                //attacking = true;
-                //if (attacking)
-                //{
-                //    PlayerAttack();
-                //    attacking = false;
-                //}
-                //else
-                //{
-                //    PlayerDefault();
-                //}
-
-                float attackCoolDown = 1.0f;
-                float attackTimer = 0.0f;
-                attacking = true;
-
-                if (attacking == true && attackTimer < attackCoolDown)
+                if (KeyPlayerReader.KeyPressed(Keys.A) || KeyPlayerReader.KeyPressed(Keys.Left))
                 {
-                    PlayerAttack();
-                    attackTimer = 0;
-                    attacking = false;
+                    playerRec = new Rectangle(0, 0, 39, 41);
+                    ChangeDirection(new Vector2(-1, 0));
                 }
-                else
+                else if (KeyPlayerReader.KeyPressed(Keys.D) || KeyPlayerReader.KeyPressed(Keys.Right))
                 {
-                    PlayerDefault();
+                    playerRec = new Rectangle(0,0, 39, 41);
+                    ChangeDirection(new Vector2(1,0));
+                }
+                else if (KeyPlayerReader.KeyPressed(Keys.W) || KeyPlayerReader.KeyPressed(Keys.Up))
+                {
+                    playerRec = new Rectangle(0 ,80, 39, 41);
+                    ChangeDirection(new Vector2(0, -1));
+                }
+                else if (KeyPlayerReader.KeyPressed(Keys.S) || KeyPlayerReader.KeyPressed(Keys.Down))
+                {
+                    playerRec = new Rectangle(0,40, 39, 41);
+                    ChangeDirection(new Vector2(0,1));
+                }
+                else if (KeyPlayerReader.KeyPressed(Keys.Space) || KeyPlayerReader.LeftClick())
+                {
+                    if (!attacking)
+                    {
+                        PlayerAttack();
+                    }
+                }
+            }
+            else
+            {
+                position += playerDirection * speed * (float)gametime.ElapsedGameTime.TotalSeconds;
+                //playerRec.X = (int)position.X;
+                //playerRec.Y = (int)position.Y;
+
+                if (Vector2.Distance(position, playerDestination) < 1)
+                {
+                    position = playerDestination;
+                    playerMoving = false;
                 }
             }
         }
-        public void PlayerAttack()
+
+        public void ChangeDirection(Vector2 direction)
+        {
+            playerDirection = direction;
+            Vector2 newPlayerDestination = position + playerDirection * Game1.tileSize;
+
+            if (Game1.GetTileAtPosition(newPlayerDestination)) // If the tile is walkable
+            {
+                playerDestination = newPlayerDestination;
+                playerMoving = true;
+            }
+        }
+        public bool PlayerAttack()
         {
             playerRec = new Rectangle(0,118,39,41); //start the attack animation from here
-
-        }
-
-        public void PlayerDefault()
-        {
-            playerRec = new Rectangle(0, 40, 39, 41); // player default animation
-        }
-
-        public void Update()
-        {
-            playerMovement();
+            return attacking = true;
         }
         public void Draw(SpriteBatch spriteBatch)
         {
