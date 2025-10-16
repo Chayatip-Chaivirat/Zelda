@@ -7,7 +7,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Zelda
 {
-    public class Game1 : Game
+    public class Game1 : Game   
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
@@ -25,7 +25,7 @@ namespace Zelda
 
         //======== Tile ========
         public static Tile[,] tileArray;
-        public static int tileSize = 25;
+        public static int tileSize = 40;
 
         Tile wallTile;
         Vector2 wallTilePos;
@@ -66,7 +66,10 @@ namespace Zelda
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-
+            _graphics.IsFullScreen = false;
+            _graphics.PreferredBackBufferHeight = 1120;
+            _graphics.PreferredBackBufferWidth = 1200;
+            _graphics.ApplyChanges();
             base.Initialize();
         }
         protected override void LoadContent()
@@ -78,10 +81,6 @@ namespace Zelda
             enemyPos = new Vector2 (0,0);
             enemyRec = new Rectangle(0,0,39,39);
             enemy = new Enemy(TextureManager.enemyTex, enemyPos, enemyRec);
-
-            //======== Player ========
-            playerPos = new Vector2(200,250);
-            player = new Player(TextureManager.playerTex, playerPos );
 
             //======== Tile ========
             CreateMap(@"gameMap.txt");
@@ -160,13 +159,26 @@ namespace Zelda
                         bushSTilePos = new Vector2(j * tileSize, i * tileSize);
                         tileArray[j,i] = new Tile(TextureManager.bushSTex, bushSTilePos, false);
                     }
+                    else if (map[i][j] == 'P') // Player
+                    {
+                        playerPos = new Vector2(j * tileSize, i * tileSize);
+                        tileArray[j, i] = new Tile(TextureManager.grassTex, playerPos, true);
+                        player = new Player(TextureManager.playerTex, playerPos);
+                    }
                 }
             }
         }
 
         public static bool GetTileAtPosition(Vector2 position)
         {
-            return tileArray[(int)position.X / tileSize, (int)position.Y / tileSize].isWalkable=false;
+            int tileX = (int)position.X / tileSize;
+            int tileY = (int)position.Y / tileSize;
+
+            // Prevent out of bounds
+            if (tileX < 0 || tileY < 0 || tileX >= tileArray.GetLength(0) || tileY >= tileArray.GetLength(1))
+                return false;
+
+            return tileArray[tileX, tileY].isWalkable;
         }
         protected override void Update(GameTime gameTime)
         {

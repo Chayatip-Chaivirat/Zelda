@@ -1,8 +1,11 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using SharpDX.DirectWrite;
-using System.Reflection.Metadata.Ecma335;
 namespace Zelda
 {
     public class Player
@@ -10,6 +13,7 @@ namespace Zelda
         public Texture2D playerTex;
         public Vector2 position;
         public Rectangle playerRec;
+        public Rectangle playerHitbox;
         public int lives = 10;
         public Vector2 playerDirection;
         public float speed;
@@ -23,6 +27,7 @@ namespace Zelda
             this.playerTex = playerTex;
             this.position = position;
             playerRec = new Rectangle(0, 0, 39, 41);
+            playerHitbox = new Rectangle(0, 0, 39, 41);
             playerDirection = new Vector2(0, 0);
             speed = 200;
             playerMoving = false;
@@ -30,37 +35,49 @@ namespace Zelda
         }
         public void Update(GameTime gametime)
         {
-            KeyboardState state = Keyboard.GetState();
+            KeyPlayerReader.Update();
             attacking = false;
 
             if (!playerMoving)
             {
-                if (state.IsKeyDown(Keys.A) || state.IsKeyDown(Keys.Left))
+                if (KeyPlayerReader.KeyPressed(Keys.A) || KeyPlayerReader.KeyPressed(Keys.Left))
                 {
                     playerRec = new Rectangle(0, 0, 39, 41);
                     ChangeDirection(new Vector2(-1, 0));
                 }
-                else if (state.IsKeyDown(Keys.D) || state.IsKeyDown(Keys.Right))
+                else if (KeyPlayerReader.KeyPressed(Keys.D) || KeyPlayerReader.KeyPressed(Keys.Right))
                 {
                     playerRec = new Rectangle(0,0, 39, 41);
                     ChangeDirection(new Vector2(1,0));
                 }
-                else if (state.IsKeyDown(Keys.W) || state.IsKeyDown(Keys.Up))
+                else if (KeyPlayerReader.KeyPressed(Keys.W) || KeyPlayerReader.KeyPressed(Keys.Up))
                 {
                     playerRec = new Rectangle(0 ,80, 39, 41);
                     ChangeDirection(new Vector2(0, -1));
                 }
-                else if (state.IsKeyDown(Keys.S) || state.IsKeyDown(Keys.Down))
+                else if (KeyPlayerReader.KeyPressed(Keys.S) || KeyPlayerReader.KeyPressed(Keys.Down))
                 {
                     playerRec = new Rectangle(0,40, 39, 41);
                     ChangeDirection(new Vector2(0,1));
                 }
-                else if (!attacking && state.IsKeyDown(Keys.Space) || Mouse.GetState().LeftButton == ButtonState.Pressed)
+                else if (KeyPlayerReader.KeyPressed(Keys.Space) || KeyPlayerReader.LeftClick())
                 {
                     if (!attacking)
                     {
                         PlayerAttack();
                     }
+                }
+            }
+            else
+            {
+                position += playerDirection * speed * (float)gametime.ElapsedGameTime.TotalSeconds;
+                //playerRec.X = (int)position.X;
+                //playerRec.Y = (int)position.Y;
+
+                if (Vector2.Distance(position, playerDestination) < 1)
+                {
+                    position = playerDestination;
+                    playerMoving = false;
                 }
             }
         }
@@ -69,7 +86,8 @@ namespace Zelda
         {
             playerDirection = direction;
             Vector2 newPlayerDestination = position + playerDirection * Game1.tileSize;
-            if (Game1.GetTileAtPosition(newPlayerDestination))
+
+            if (Game1.GetTileAtPosition(newPlayerDestination)) // If the tile is walkable
             {
                 playerDestination = newPlayerDestination;
                 playerMoving = true;
@@ -79,11 +97,6 @@ namespace Zelda
         {
             playerRec = new Rectangle(0,118,39,41); //start the attack animation from here
             return attacking = true;
-        }
-
-        public void PlayerDefault()
-        {
-                playerRec = new Rectangle((int)position.X, (int)position.Y, 39, 41); // player default animation
         }
         public void Draw(SpriteBatch spriteBatch)
         {
