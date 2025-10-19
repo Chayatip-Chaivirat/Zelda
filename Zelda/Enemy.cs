@@ -8,7 +8,8 @@ namespace Zelda
     {
         public Texture2D enemyTex;
         public Vector2 position;
-        public int speed;
+        public int speed = 1;
+        public int movementDirection = 1;
         public Vector2 enemyDestination;
         public Vector2 enemyDirection;
 
@@ -18,19 +19,26 @@ namespace Zelda
             this.position = position;
 
         }
-        public void UpDownMovement(Vector2 direction)
+        public void UpDownMovement()
         {
-            enemyDestination = direction;
-            Vector2 newEnemyDestination = position + enemyDirection * Game1.tileSize;
-            if (Game1.GetTileAtPosition(newEnemyDestination))
+            position.Y += speed * movementDirection;
+
+            Vector2 enemyPositionY = new Vector2(position.X, position.Y + (movementDirection * Game1.tileSize / 3));
+            if (!Game1.GetTileAtPosition(enemyPositionY))
             {
-                position.Y += speed;
+                movementDirection *= -1;
             }
         }
 
-        public void LeftRightMovement(int speed)
+        public void LeftRightMovement()
         {
-            position.X += speed;
+            position.X += speed * movementDirection;
+
+            Vector2 enemyPositionX = new Vector2(position.X + (movementDirection * Game1.tileSize / 2), position.Y);
+            if (!Game1.GetTileAtPosition(enemyPositionX))
+            {
+                movementDirection *= -1;
+            }
         }
         
         public void Draw(SpriteBatch spriteBatch)

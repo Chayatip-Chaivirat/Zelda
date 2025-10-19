@@ -205,6 +205,10 @@ namespace Zelda
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             player.Update(gameTime);
+            foreach (Enemy ene in enemyList)
+            {
+                ene.UpDownMovement();
+            }
 
             base.Update(gameTime);
         }
