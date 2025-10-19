@@ -17,7 +17,7 @@ namespace Zelda
         //======== Enemy ========
         Enemy enemy;
         Vector2 enemyPos;
-        Rectangle enemyRec;
+        List<Enemy> enemyList;
 
         //======== Player ========
         Player player;
@@ -56,6 +56,12 @@ namespace Zelda
 
         Tile openDoorTile;
         Vector2 openDoorTilePos;
+
+        //======== Zelda the Princess ========
+        Vector2 zeldaPos;
+
+        //======== Key to the Door ========
+        Vector2 keyPos;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -76,11 +82,7 @@ namespace Zelda
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             TextureManager.Textures(Content);
-
-            //======== Enemy ========
-            enemyPos = new Vector2 (0,0);
-            enemyRec = new Rectangle(0,0,39,39);
-            enemy = new Enemy(TextureManager.enemyTex, enemyPos, enemyRec);
+            enemyList = new List<Enemy>();
 
             //======== Tile ========
             CreateMap(@"gameMap.txt");
@@ -165,6 +167,24 @@ namespace Zelda
                         tileArray[j, i] = new Tile(TextureManager.grassTex, playerPos, true);
                         player = new Player(TextureManager.playerTex, playerPos);
                     }
+                    else if (map[i][j] == 'Z') // Zelda the Princess
+                    {
+                        zeldaPos = new Vector2(j * tileSize, i * tileSize);
+                        //tileArray[j, i] = new Tile(TextureManager.stoneFloorTex, zeldaPos, true);
+                        tileArray[j, i] = new Tile(TextureManager.zeldaTex, zeldaPos, true);
+                    }
+                    else if (map[i][j] == 'E') // Enemy 
+                    { 
+                        enemyPos = new Vector2(j * tileSize, i * tileSize);
+                        tileArray[j, i] = new Tile(TextureManager.grassTex, enemyPos, true);
+                        enemy = new Enemy(TextureManager.enemyTex, enemyPos);
+                        enemyList.Add(enemy);
+                    }
+                    else if (map[i][j] == 'K') // Key to the Door
+                    {
+                        keyPos = new Vector2(j * tileSize, i * tileSize);
+                        tileArray[j, i] = new Tile(TextureManager.keyTex, keyPos, true);
+                    }
                 }
             }
         }
@@ -175,7 +195,7 @@ namespace Zelda
             int tileY = (int)position.Y / tileSize;
 
             // Prevent out of bounds
-            if (tileX < 0 || tileY < 0 || tileX >= tileArray.GetLength(0) || tileY >= tileArray.GetLength(1))
+            if (tileX < 0 || tileY < 0 || tileX >= tileArray.GetLength(0) || tileY >= tileArray.GetLength(0))
                 return false;
 
             return tileArray[tileX, tileY].isWalkable;
@@ -200,6 +220,11 @@ namespace Zelda
                 {
                     tile.Draw(_spriteBatch);
                 }
+            }
+
+            foreach (Enemy ene in enemyList)
+            {
+                ene.Draw(_spriteBatch);
             }
             player.Draw(_spriteBatch);
             _spriteBatch.End();
