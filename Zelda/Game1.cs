@@ -180,17 +180,24 @@ namespace Zelda
                         //tileArray[j, i] = new Tile(TextureManager.stoneFloorTex, zeldaPos, true);
                         tileArray[j, i] = new Tile(TextureManager.zeldaTex, zeldaPos, true);
                     }
-                    else if (map[i][j] == 'E') // Enemy 
+                    else if (map[i][j] == 'E') // Enemy: Left Right movements
                     { 
                         enemyPos = new Vector2(j * tileSize, i * tileSize);
                         tileArray[j, i] = new Tile(TextureManager.grassTex, enemyPos, true);
-                        enemy = new Enemy(TextureManager.enemyTex, enemyPos);
+                        enemy = new Enemy(TextureManager.enemyTex, enemyPos, false);
                         enemyList.Add(enemy);
                     }
                     else if (map[i][j] == 'K') // Key to the Door
                     {
                         keyPos = new Vector2(j * tileSize, i * tileSize);
                         tileArray[j, i] = new Tile(TextureManager.keyTex, keyPos, true);
+                    }
+                    else if (map[i][j] == 'e') // Enemy: Up Down movements
+                    {
+                        enemyPos = new Vector2(j * tileSize, i * tileSize);
+                        tileArray[j, i] = new Tile(TextureManager.grassTex, enemyPos, true);
+                        enemy = new Enemy(TextureManager.enemyTex, enemyPos, true);
+                        enemyList.Add(enemy);
                     }
                 }
             }
@@ -214,7 +221,14 @@ namespace Zelda
             player.Update(gameTime);
             foreach (Enemy ene in enemyList)
             {
-                ene.LeftRightMovement();
+                if(ene.movementUp)
+                {
+                    ene.UpDownMovement();
+                }
+                else
+                {
+                    ene.LeftRightMovement();
+                }
             }
 
             base.Update(gameTime);

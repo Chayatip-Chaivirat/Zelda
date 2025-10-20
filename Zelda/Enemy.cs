@@ -13,29 +13,86 @@ namespace Zelda
     {
         public Texture2D enemyTex;
         public Vector2 position;
-        public int speedLeftRight = 2;
+        public int speed;
         public int movementDirection = 1;
-        public int speedUpDown = 1;
 
         public Vector2 enemyDestination;
         public Vector2 enemyDirection;
-        public Rectangle enemyRec;
+        public Rectangle enemySourceRec;
+        public bool movementUp;
 
-        public Enemy(Texture2D enemyTex, Vector2 position)
+        public Enemy(Texture2D enemyTex, Vector2 position, bool movementUp)
         {
             this.enemyTex = enemyTex;
             this.position = position;
-            enemyRec = new Rectangle(0, 0, 40, 40);
+            this.movementUp = movementUp;
+            enemySourceRec = new Rectangle(0, 0, 40, 40);
 
+            if (!movementUp)
+            {
+                speed = 2;
+            }
+            else 
+            {
+                speed = 1;
+            }
         }
+
+        //public void Movement(bool movementUp) // Doesn't work
+        //{
+        //    position.Y += speed * movementDirection;
+        //    position.X += speed * movementDirection;
+        //    enemySourceRec.X = (int)position.X;
+        //    enemySourceRec.Y = (int)position.Y;
+
+        //    if (movementUp)
+        //    {
+        //        Vector2 enemyPositionY = new Vector2(position.X, enemySourceRec.Top);
+        //        if (enemySourceRec.Top == 0 || enemySourceRec.Bottom == Game1.windowWidthStatic)
+        //        {
+        //            movementDirection *= -1;
+        //        }
+
+        //        if (!Game1.GetTileAtPosition(enemyPositionY)) //When walkable = true
+        //        {
+        //            movementDirection *= -1;
+        //        }
+
+        //        Vector2 enemyPositionYBottom = new Vector2(position.X, enemySourceRec.Bottom);
+        //        if (!Game1.GetTileAtPosition(enemyPositionYBottom))
+        //        {
+        //            movementDirection *= -1;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        Vector2 enemyPositionX = new Vector2(enemySourceRec.Left, position.Y);
+        //        if (enemySourceRec.Right == Game1.windowWidthStatic || enemySourceRec.Left == 0)
+        //        {
+        //            movementDirection *= -1;
+        //        }
+
+        //        if (!Game1.GetTileAtPosition(enemyPositionX)) //When walkable = true
+        //        {
+        //            movementDirection *= -1;
+        //        }
+
+        //        Vector2 enemyPositionXRight = new Vector2(enemySourceRec.Right, position.Y);
+        //        if (!Game1.GetTileAtPosition(enemyPositionXRight))
+        //        {
+        //            movementDirection *= -1;
+        //        }
+        //    }
+           
+        //}
         public void UpDownMovement()
         {
-            position.Y += speedUpDown * movementDirection;
-            enemyRec.X = (int)position.X;
-            enemyRec.Y = (int)position.Y;
+            position.Y += speed * movementDirection;
+            enemySourceRec.X = (int)position.X;
+            enemySourceRec.Y = (int)position.Y;
 
-            Vector2 enemyPositionY = new Vector2(position.X, enemyRec.Top);
-            if (enemyRec.Top == 0 || enemyRec.Bottom == Game1.windowWidthStatic)
+            Vector2 enemyPositionY = new Vector2(position.X, enemySourceRec.Top);
+            if (enemySourceRec.Top == 0 || enemySourceRec.Bottom == Game1.windowWidthStatic)
             {
                 movementDirection *= -1;
             }
@@ -45,7 +102,7 @@ namespace Zelda
                 movementDirection *= -1;
             }
 
-            Vector2 enemyPositionYBottom = new Vector2(position.X, enemyRec.Bottom);
+            Vector2 enemyPositionYBottom = new Vector2(position.X, enemySourceRec.Bottom);
             if (!Game1.GetTileAtPosition(enemyPositionYBottom))
             {
                 movementDirection *= -1;
@@ -54,12 +111,12 @@ namespace Zelda
 
         public void LeftRightMovement()
         {
-            position.X += speedLeftRight * movementDirection;
-            enemyRec.X = (int) position.X;
-            enemyRec.Y = (int)position.Y;
+            position.X += speed * movementDirection;
+            enemySourceRec.X = (int)position.X;
+            enemySourceRec.Y = (int)position.Y;
 
-            Vector2 enemyPositionX = new Vector2(enemyRec.Left, position.Y);
-            if(enemyRec.Right == Game1.windowWidthStatic || enemyRec.Left == 0)
+            Vector2 enemyPositionX = new Vector2(enemySourceRec.Left, position.Y);
+            if (enemySourceRec.Right == Game1.windowWidthStatic || enemySourceRec.Left == 0)
             {
                 movementDirection *= -1;
             }
@@ -69,13 +126,13 @@ namespace Zelda
                 movementDirection *= -1;
             }
 
-                Vector2 enemyPositionXRight = new Vector2(enemyRec.Right, position.Y);
+            Vector2 enemyPositionXRight = new Vector2(enemySourceRec.Right, position.Y);
             if (!Game1.GetTileAtPosition(enemyPositionXRight))
             {
                 movementDirection *= -1;
             }
         }
-        
+
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(enemyTex, position, Color.White);
