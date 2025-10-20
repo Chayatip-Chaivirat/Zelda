@@ -13,7 +13,7 @@ namespace Zelda
          //===== Enemy =====
         public static Texture2D enemyTex;
 
-        //===== Key =====
+        //===== Key to the Door =====
         public static Texture2D keyTex;
 
         //===== Tile =====
@@ -29,6 +29,9 @@ namespace Zelda
         //===== Door =====
         public static Texture2D doorTex;
         public static Texture2D openDoorTex;
+
+        //===== Zelda the Princess =====
+        public static Texture2D zeldaTex;
 
         public static void Textures(ContentManager content)
         {
@@ -49,6 +52,8 @@ namespace Zelda
 
             doorTex = content.Load<Texture2D>("door");
             openDoorTex = content.Load<Texture2D>("opendoor");
+
+            zeldaTex = content.Load<Texture2D>("Zelda");
         }
     }
 }
