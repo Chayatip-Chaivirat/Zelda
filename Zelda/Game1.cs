@@ -13,6 +13,8 @@ namespace Zelda
         private SpriteBatch _spriteBatch;
         string mapText;
         List<string> result;
+        public static int windowHeightStatic;
+        public static int windowWidthStatic;
 
         //======== Enemy ========
         Enemy enemy;
@@ -73,8 +75,13 @@ namespace Zelda
         {
             // TODO: Add your initialization logic here
             _graphics.IsFullScreen = false;
-            _graphics.PreferredBackBufferHeight = 1120;
-            _graphics.PreferredBackBufferWidth = 1200;
+            int windowHeight = 1120;
+            _graphics.PreferredBackBufferHeight = windowHeight;
+            windowHeightStatic = windowHeight;
+
+            int windowWidth = 1200;
+            _graphics.PreferredBackBufferWidth = windowWidth;
+            windowWidthStatic = windowWidth;
             _graphics.ApplyChanges();
             base.Initialize();
         }
