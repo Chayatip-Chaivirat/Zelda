@@ -207,7 +207,7 @@ namespace Zelda
             player.Update(gameTime);
             foreach (Enemy ene in enemyList)
             {
-                ene.UpDownMovement();
+                ene.LeftRightMovement();
             }
 
             base.Update(gameTime);
