@@ -37,25 +37,6 @@ namespace Zelda
             {
                 Game1.enemyList.Remove(ene);
             }
-
-            //Game1.enemyList.RemoveAll(ene =>
-            //{
-            //    if (player.playerHitbox.Intersects(ene.enemyHitbox))
-            //    {
-            //        if (player.attacking == false) //If player intersects with enemy without attacking
-            //        {
-            //            player.lives -= 1;
-            //            return false;
-            //        }
-            //        else //If player intersects with enemy and is attacking
-            //        {
-            //            Game1.score += 1;
-            //            removedEnemyList.Add(ene);
-            //            return true;
-            //        }
-            //    }
-            //    return false;
-            //});
         }
 
         public static void PlayerKey(Player player, Key key)

@@ -40,8 +40,9 @@ namespace Zelda
         Vector2 bridgeTilePos;
         Vector2 doorTilePos;
 
-        //======== Zelda the Princess ========
+        //======== EndGoal ========
         Vector2 zeldaPos;
+        EndGoal zeldaThePrincess;
 
         //======== Key to the Door ========
         Vector2 keyPos;
@@ -154,8 +155,8 @@ namespace Zelda
                     else if (map[i][j] == 'Z') // Zelda the Princess
                     {
                         zeldaPos = new Vector2(j * tileSize, i * tileSize);
-                        //tileArray[j, i] = new Tile(TextureManager.stoneFloorTex, zeldaPos, true);
-                        tileArray[j, i] = new Tile(TextureManager.zeldaTex, zeldaPos, true);
+                        tileArray[j, i] = new Tile(TextureManager.stoneFloorTex, zeldaPos, true);
+                        zeldaThePrincess = new EndGoal(zeldaPos);
                     }
                     else if (map[i][j] == 'E') // Enemy: Left Right movements
                     { 
@@ -248,6 +249,7 @@ namespace Zelda
             }
             player.Draw(_spriteBatch);
             key.Draw(_spriteBatch);
+            zeldaThePrincess.Draw(_spriteBatch);
             _spriteBatch.End();
 
             base.Draw(gameTime);
