@@ -20,7 +20,7 @@ namespace Zelda
         public bool playerMoving;
         public Vector2 playerDestination;
 
-        public bool keyRetrieved = false; // Maybe in another class???
+        public bool keyRetrieved = false; 
         public bool attacking = false;
         public Player(Texture2D playerTex, Vector2 position)
         {

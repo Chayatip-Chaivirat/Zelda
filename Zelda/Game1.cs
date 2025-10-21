@@ -66,6 +66,7 @@ namespace Zelda
 
         //======== Key to the Door ========
         Vector2 keyPos;
+        Key key;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -192,7 +193,8 @@ namespace Zelda
                     else if (map[i][j] == 'K') // Key to the Door
                     {
                         keyPos = new Vector2(j * tileSize, i * tileSize);
-                        tileArray[j, i] = new Tile(TextureManager.keyTex, keyPos, true);
+                        tileArray[j, i] = new Tile(TextureManager.grassTex, keyPos, true);
+                        key = new Key(keyPos);
                     }
                     else if (map[i][j] == 'e') // Enemy: Up Down movements
                     {
@@ -233,6 +235,7 @@ namespace Zelda
                 }
             }
             CollisionManager.PlayerEnemyCollision(player);
+            CollisionManager.PlayerKey(player, key);
 
             base.Update(gameTime);
         }
@@ -255,6 +258,7 @@ namespace Zelda
                 ene.Draw(_spriteBatch);
             }
             player.Draw(_spriteBatch);
+            key.Draw(_spriteBatch);
             _spriteBatch.End();
 
             base.Draw(gameTime);
