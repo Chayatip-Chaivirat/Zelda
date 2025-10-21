@@ -12,7 +12,7 @@ namespace Zelda
     {
         public Texture2D playerTex;
         public Vector2 position;
-        public Rectangle playerRec;
+        public Rectangle playerSourceRec;
         public Rectangle playerHitbox;
         public int lives = 10;
         public Vector2 playerDirection;
@@ -26,8 +26,8 @@ namespace Zelda
         {
             this.playerTex = playerTex;
             this.position = position;
-            playerRec = new Rectangle(0, 0, 39, 41);
-            playerHitbox = new Rectangle(0, 0, 39, 41);
+            playerSourceRec = new Rectangle(0, 0, 39, 41);
+            playerHitbox = new Rectangle((int)position.X, (int)position.Y, 39, 41);
             playerDirection = new Vector2(0, 0);
             speed = 200;
             playerMoving = false;
@@ -42,22 +42,22 @@ namespace Zelda
             {
                 if (KeyPlayerReader.KeyPressed(Keys.A) || KeyPlayerReader.KeyPressed(Keys.Left))
                 {
-                    playerRec = new Rectangle(0, 0, 39, 41);
+                    playerSourceRec = new Rectangle(0, 0, 39, 41);
                     ChangeDirection(new Vector2(-1, 0));
                 }
                 else if (KeyPlayerReader.KeyPressed(Keys.D) || KeyPlayerReader.KeyPressed(Keys.Right))
                 {
-                    playerRec = new Rectangle(0,0, 39, 41);
+                    playerSourceRec = new Rectangle(0,0, 39, 41);
                     ChangeDirection(new Vector2(1,0));
                 }
                 else if (KeyPlayerReader.KeyPressed(Keys.W) || KeyPlayerReader.KeyPressed(Keys.Up))
                 {
-                    playerRec = new Rectangle(0 ,80, 39, 41);
+                    playerSourceRec = new Rectangle(0 ,80, 39, 41);
                     ChangeDirection(new Vector2(0, -1));
                 }
                 else if (KeyPlayerReader.KeyPressed(Keys.S) || KeyPlayerReader.KeyPressed(Keys.Down))
                 {
-                    playerRec = new Rectangle(0,40, 39, 41);
+                    playerSourceRec = new Rectangle(0,40, 39, 41);
                     ChangeDirection(new Vector2(0,1));
                 }
                 else if (KeyPlayerReader.KeyPressed(Keys.Space) || KeyPlayerReader.LeftClick())
@@ -71,8 +71,8 @@ namespace Zelda
             else
             {
                 position += playerDirection * speed * (float)gametime.ElapsedGameTime.TotalSeconds;
-                //playerRec.X = (int)position.X;
-                //playerRec.Y = (int)position.Y;
+                playerHitbox.X = (int)position.X;
+                playerHitbox.Y = (int)position.Y;
 
                 if (Vector2.Distance(position, playerDestination) < 1)
                 {
@@ -95,12 +95,12 @@ namespace Zelda
         }
         public bool PlayerAttack()
         {
-            playerRec = new Rectangle(0,118,39,41); //start the attack animation from here
+            playerSourceRec = new Rectangle(0,118,39,41); //start the attack animation from here
             return attacking = true;
         }
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(playerTex, position, playerRec, Color.White);
+            spriteBatch.Draw(playerTex, position, playerSourceRec, Color.White);
         }
     }
 }
