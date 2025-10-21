@@ -15,6 +15,7 @@ namespace Zelda
         public Vector2 position;
         public int speed;
         public int movementDirection = 1;
+        public Rectangle enemyHitbox;
 
         public Vector2 enemyDestination;
         public Vector2 enemyDirection;
@@ -27,6 +28,7 @@ namespace Zelda
             this.position = position;
             this.movementUp = movementUp;
             enemySourceRec = new Rectangle(0, 0, 40, 40);
+            enemyHitbox = new Rectangle((int)position.X, (int)position.Y, 40,40);
 
             if (!movementUp)
             {
@@ -88,6 +90,8 @@ namespace Zelda
         public void UpDownMovement()
         {
             position.Y += speed * movementDirection;
+            enemyHitbox.X = (int)position.X;
+            enemyHitbox.Y = (int)position.Y;
             enemySourceRec.X = (int)position.X;
             enemySourceRec.Y = (int)position.Y;
 
@@ -112,6 +116,8 @@ namespace Zelda
         public void LeftRightMovement()
         {
             position.X += speed * movementDirection;
+            enemyHitbox.X = (int)position.X;
+            enemyHitbox.Y = (int)position.Y;
             enemySourceRec.X = (int)position.X;
             enemySourceRec.Y = (int)position.Y;
 

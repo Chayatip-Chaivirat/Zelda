@@ -16,10 +16,12 @@ namespace Zelda
         public static int windowHeightStatic;
         public static int windowWidthStatic;
 
+        public static int score = 0;
+
         //======== Enemy ========
         Enemy enemy;
         Vector2 enemyPos;
-        List<Enemy> enemyList;
+        public static List<Enemy> enemyList;
 
         //======== Player ========
         Player player;
@@ -230,6 +232,7 @@ namespace Zelda
                     ene.LeftRightMovement();
                 }
             }
+            CollisionManager.PlayerEnemyCollision(player);
 
             base.Update(gameTime);
         }
