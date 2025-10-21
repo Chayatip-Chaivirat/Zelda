@@ -14,6 +14,7 @@ namespace Zelda
         public bool enemyAttackedPlayer = false;
         Player player;
         Enemy enemy;
+        Key key;
         public static void PlayerEnemyCollision(Player player)
         {
             List<Enemy> removedEnemyList = new List<Enemy>();
@@ -57,6 +58,20 @@ namespace Zelda
             //});
         }
 
+        public static void PlayerKey(Player player, Key key)
+        {
+            if (player.playerHitbox.Intersects(key.keyHitbox))
+            {
+                player.keyRetrieved = true;
+            }
+            if(player.keyRetrieved)
+            {
+                key.keyPos.X = player.position.X;
+                key.keyPos.Y = player.position.Y -1;
+
+                key.keyHitbox = new Rectangle( (int)key.keyPos.X, (int)key.keyPos.Y, Game1.tileSize, Game1.tileSize);
+            }
+        }
         
     }
 }
