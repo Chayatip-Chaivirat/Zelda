@@ -30,36 +30,15 @@ namespace Zelda
         //======== Tile ========
         public static Tile[,] tileArray;
         public static int tileSize = 40;
-
-        Tile wallTile;
         Vector2 wallTilePos;
-
-        Tile stoneFloorTile;
         Vector2 stoneFloorTilePos;
-
-        Tile waterTile;
         Vector2 waterTilePos;
-
-        Tile soilTile;
         Vector2 soilTilePos;
-
-        Tile grassTile;
         Vector2 grassTilePos;
-
-        Tile bushTile;
         Vector2 bushTilePos;
-
-        Tile bushSTile;
         Vector2 bushSTilePos;
-
-        Tile bridgeTile;
         Vector2 bridgeTilePos;
-
-        Tile doorTile;
         Vector2 doorTilePos;
-
-        Tile openDoorTile;
-        Vector2 openDoorTilePos;
 
         //======== Zelda the Princess ========
         Vector2 zeldaPos;
@@ -156,11 +135,6 @@ namespace Zelda
                         doorTilePos = new Vector2(j * tileSize, i * tileSize);
                         tileArray[j,i] = new Tile(TextureManager.doorTex, doorTilePos, false);
                     }
-                    else if (map[i][j] == '/') // Open Door
-                    {
-                        openDoorTilePos= new Vector2(j * tileSize, i * tileSize);
-                        tileArray[j,i] = new Tile(TextureManager.openDoorTex, openDoorTilePos, true);
-                    }
                     else if (map[i][j] == '+') // Bush
                     {
                         bushTilePos = new Vector2(j * tileSize, i * tileSize);
@@ -223,6 +197,8 @@ namespace Zelda
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             player.Update(gameTime);
+            CollisionManager.PlayerEnemyCollision(player);
+            CollisionManager.PlayerKey(player, key);
             foreach (Enemy ene in enemyList)
             {
                 if(ene.movementUp)
@@ -234,8 +210,21 @@ namespace Zelda
                     ene.LeftRightMovement();
                 }
             }
-            CollisionManager.PlayerEnemyCollision(player);
-            CollisionManager.PlayerKey(player, key);
+
+            if(player.keyRetrieved) //if player retrived the key => open the door
+            {
+                for (int x = 0; x < tileArray.GetLength(0); x++)
+                {
+                    for(int y = 0; y < tileArray.GetLength(1); y++)
+                    {
+                        if (tileArray[x,y] != null && tileArray[x,y].tileTex == TextureManager.doorTex)
+                        {
+                            tileArray[x, y] = new Tile(TextureManager.openDoorTex, doorTilePos, true);
+                        }
+                    }
+                }
+            }
+ 
 
             base.Update(gameTime);
         }
