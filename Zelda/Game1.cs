@@ -62,6 +62,7 @@ namespace Zelda
 
         //======== Gamestates: GameOver ========
         public bool fileIsWritten = false;
+        SpriteFont scoreSpriteFont;
         enum GameState
         {
             Starting,
@@ -97,6 +98,7 @@ namespace Zelda
             TextureManager.Textures(Content);
             enemyList = new List<Enemy>();
             startSpriteFont = Content.Load<SpriteFont>("Start");
+            scoreSpriteFont = Content.Load<SpriteFont>("ScoreFont");
 
             //======== Tile ========
             CreateMap(@"gameMap.txt");
@@ -378,6 +380,14 @@ namespace Zelda
                 player.Draw(_spriteBatch);
                 key.Draw(_spriteBatch);
                 zeldaThePrincess.Draw(_spriteBatch);
+
+                Vector2 scorePos = new Vector2((int) windowWidthStatic/2, 1040);
+                _spriteBatch.DrawString(scoreSpriteFont, "Score: " + score, scorePos, Color.Black);
+            }
+            if(gameState == GameState.GameOver)
+            {
+                Vector2 scoreFontPos = new Vector2((int) windowWidthStatic/2, (int) windowHeightStatic / 2);
+                _spriteBatch.DrawString(scoreSpriteFont, "Your score: " + score, scoreFontPos, Color.Black);
             }
             
             _spriteBatch.End();
