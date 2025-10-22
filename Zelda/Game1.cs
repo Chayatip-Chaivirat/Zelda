@@ -59,6 +59,9 @@ namespace Zelda
 
         //======== Gamestates: starting ========
         SpriteFont startSpriteFont;
+
+        //======== Gamestates: GameOver ========
+        public bool fileIsWritten = false;
         enum GameState
         {
             Starting,
@@ -116,13 +119,15 @@ namespace Zelda
         {
             //StreamWriter sw = new StreamWriter(fileName);
             //List<int> scoreList = new List<int>();
+            ReadFromFile(fileName);
             FileStream leaderboard = null;
                 try
                 {
-                    leaderboard = new FileStream(fileName, FileMode.Open);
+                    leaderboard = new FileStream(fileName, FileMode.Append, FileAccess.Write);
                     using (StreamWriter sw = new StreamWriter(leaderboard))
                     {
-                        sw.WriteLine(score);
+                        sw.WriteLine("\n"+score);
+                        fileIsWritten = true;
                     }
                 }
                 catch
@@ -229,7 +234,7 @@ namespace Zelda
             int tileY = (int)position.Y / tileSize;
 
             // Prevent out of bounds
-            if (tileX < 0 || tileY < 0 || tileX >= tileArray.GetLength(0) || tileY >= tileArray.GetLength(1))
+            if (tileX < 0 || tileY < 0 || tileX >= tileArray.GetLength(0) || tileY >= tileArray.GetLength(0))
                 return false;
 
             return tileArray[tileX, tileY].isWalkable;
@@ -298,6 +303,7 @@ namespace Zelda
                 player.Update(gameTime);
                 CollisionManager.PlayerEnemyCollision(player);
                 CollisionManager.PlayerKey(player, key);
+                CollisionManager.PlayerEndGoal(player, zeldaThePrincess);
                 foreach (Enemy ene in enemyList)
                 {
                     if (ene.movementUp)
@@ -323,11 +329,20 @@ namespace Zelda
                         }
                     }
                 }
+                if (zeldaThePrincess.acheivedEndGoal)
+                {
+                    gameState = GameState.GameOver;
+                }
             }
             
             if(gameState == GameState.GameOver)
             {
-                WriteScoreToFile(@"ScoreLeaderboard.txt");
+                if(!fileIsWritten)
+                {
+                    WriteScoreToFile(@"ScoreLeaderboard.txt");
+                }
+
+                //Write out the score
             }
 
 

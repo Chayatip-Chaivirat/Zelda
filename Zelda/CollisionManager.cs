@@ -15,6 +15,7 @@ namespace Zelda
         Player player;
         Enemy enemy;
         Key key;
+        EndGoal zelda;
         public static void PlayerEnemyCollision(Player player)
         {
             List<Enemy> removedEnemyList = new List<Enemy>();
@@ -51,6 +52,15 @@ namespace Zelda
                 key.keyPos.Y = player.position.Y -1;
 
                 key.keyHitbox = new Rectangle( (int)key.keyPos.X, (int)key.keyPos.Y, Game1.tileSize, Game1.tileSize);
+            }
+        }
+
+        public static void PlayerEndGoal(Player player, EndGoal zelda)
+        {
+            if (player.playerHitbox.Intersects(zelda.goalHitBox))
+            {
+                zelda.acheivedEndGoal = true;
+                Game1.score += 1000;
             }
         }
         

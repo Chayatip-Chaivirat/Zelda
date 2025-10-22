@@ -10,16 +10,18 @@ using System.Threading.Tasks;
 
 namespace Zelda
 {
-    internal class EndGoal
+    public class EndGoal
     {
         Texture2D goalTex;
         public Vector2 goalPos;
         public Rectangle goalHitBox;
+        public bool acheivedEndGoal = false;
         public EndGoal(Vector2 goalPos)
         {
             goalTex = TextureManager.zeldaTex;
             this.goalPos = goalPos;
             goalHitBox = new Rectangle((int)goalPos.X, (int)goalPos.Y, Game1.tileSize, Game1.tileSize);
+            acheivedEndGoal = false;
         }
 
         public void Draw(SpriteBatch spriteBatch)
