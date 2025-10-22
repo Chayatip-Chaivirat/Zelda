@@ -24,11 +24,11 @@ namespace Zelda
                 {
                     if (player.attacking == false) //If player intersects with enemy without attacking
                     {
-                        player.lives -= 1;
+                        Game1.score -= 10;
                     }
                     else //If player intersects with enemy and is attacking
                     {
-                        Game1.score += 1;
+                        Game1.score += 100;
                         removedEnemyList.Add(ene);
                     }
                 }

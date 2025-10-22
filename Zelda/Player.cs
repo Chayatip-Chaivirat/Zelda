@@ -35,7 +35,7 @@ namespace Zelda
         }
         public void Update(GameTime gametime)
         {
-            KeyPlayerReader.Update();
+            //KeyPlayerReader.Update();
             attacking = false;
 
             if (!playerMoving)

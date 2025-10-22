@@ -1,9 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq.Expressions;
 using static System.Net.Mime.MediaTypeNames;
+using System.Linq;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Taskbar;
+using System.Runtime.Intrinsics;
 
 namespace Zelda
 {
@@ -13,6 +18,7 @@ namespace Zelda
         private SpriteBatch _spriteBatch;
         string mapText;
         List<string> result;
+        List<int> scoreList;
         public static int windowHeightStatic;
         public static int windowWidthStatic;
 
@@ -47,6 +53,18 @@ namespace Zelda
         //======== Key to the Door ========
         Vector2 keyPos;
         Key key;
+
+        //======== Gamestates ========
+        static GameState gameState;
+
+        //======== Gamestates: starting ========
+        SpriteFont startSpriteFont;
+        enum GameState
+        {
+            Starting,
+            Playing,
+            GameOver
+        }
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -66,6 +84,8 @@ namespace Zelda
             _graphics.PreferredBackBufferWidth = windowWidth;
             windowWidthStatic = windowWidth;
             _graphics.ApplyChanges();
+
+            //GameState gameState = GameState.Starting;
             base.Initialize();
         }
         protected override void LoadContent()
@@ -73,6 +93,7 @@ namespace Zelda
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             TextureManager.Textures(Content);
             enemyList = new List<Enemy>();
+            startSpriteFont = Content.Load<SpriteFont>("Start");
 
             //======== Tile ========
             CreateMap(@"gameMap.txt");
@@ -91,6 +112,26 @@ namespace Zelda
             return result;
         }
 
+        public void WriteScoreToFile(string fileName)
+        {
+            //StreamWriter sw = new StreamWriter(fileName);
+            //List<int> scoreList = new List<int>();
+            FileStream leaderboard = null;
+                try
+                {
+                    leaderboard = new FileStream(fileName, FileMode.Open);
+                    using (StreamWriter sw = new StreamWriter(leaderboard))
+                    {
+                        sw.WriteLine(score);
+                    }
+                }
+                catch
+                {
+                    Console.Write("Can't write to ScoreLeaderboard file.");
+                }
+        }
+
+       
         public void CreateMap(string fileName)
         {
             List<string> map = ReadFromFile(fileName);
@@ -188,7 +229,7 @@ namespace Zelda
             int tileY = (int)position.Y / tileSize;
 
             // Prevent out of bounds
-            if (tileX < 0 || tileY < 0 || tileX >= tileArray.GetLength(0) || tileY >= tileArray.GetLength(0))
+            if (tileX < 0 || tileY < 0 || tileX >= tileArray.GetLength(0) || tileY >= tileArray.GetLength(1))
                 return false;
 
             return tileArray[tileX, tileY].isWalkable;
@@ -197,35 +238,98 @@ namespace Zelda
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-            player.Update(gameTime);
-            CollisionManager.PlayerEnemyCollision(player);
-            CollisionManager.PlayerKey(player, key);
-            foreach (Enemy ene in enemyList)
+            KeyPlayerReader.Update();
+
+            //switch (gameState)
+            //{
+            //    case GameState.Starting:
+            //        if (KeyPlayerReader.KeyPressed(Keys.Enter))
+            //        {
+
+            //        }
+            //        break;
+
+            //    case GameState.Playing:
+            //        player.Update(gameTime);
+            //        CollisionManager.PlayerEnemyCollision(player);
+            //        CollisionManager.PlayerKey(player, key);
+            //        foreach (Enemy ene in enemyList)
+            //        {
+            //            if(ene.movementUp)
+            //            {
+            //                ene.UpDownMovement();
+            //            }
+            //            else
+            //            {
+            //                ene.LeftRightMovement();
+            //            }
+            //        }
+
+            //        if(player.keyRetrieved) //if player retrived the key => open the door
+            //        {
+            //            for (int x = 0; x < tileArray.GetLength(0); x++)
+            //            {
+            //                for(int y = 0; y < tileArray.GetLength(1); y++)
+            //                {
+            //                    if (tileArray[x,y] != null && tileArray[x,y].tileTex == TextureManager.doorTex)
+            //                    {
+            //                        tileArray[x, y] = new Tile(TextureManager.openDoorTex, doorTilePos, true);
+            //                    }
+            //                }
+            //            }
+            //        }
+ 
+            //        break;
+            //    case GameState.GameOver:
+            //        WriteScoreToFile(@"ScoreLeaderboard.txt");
+            //        break;
+            //}
+
+            if (gameState == GameState.Starting)
             {
-                if(ene.movementUp)
+                if(KeyPlayerReader.KeyPressed(Keys.Enter))
                 {
-                    ene.UpDownMovement();
-                }
-                else
-                {
-                    ene.LeftRightMovement();
+                    gameState = GameState.Playing;
                 }
             }
 
-            if(player.keyRetrieved) //if player retrived the key => open the door
+            if(gameState == GameState.Playing)
             {
-                for (int x = 0; x < tileArray.GetLength(0); x++)
+                player.Update(gameTime);
+                CollisionManager.PlayerEnemyCollision(player);
+                CollisionManager.PlayerKey(player, key);
+                foreach (Enemy ene in enemyList)
                 {
-                    for(int y = 0; y < tileArray.GetLength(1); y++)
+                    if (ene.movementUp)
                     {
-                        if (tileArray[x,y] != null && tileArray[x,y].tileTex == TextureManager.doorTex)
+                        ene.UpDownMovement();
+                    }
+                    else
+                    {
+                        ene.LeftRightMovement();
+                    }
+                }
+
+                if (player.keyRetrieved) //if player retrived the key => open the door
+                {
+                    for (int x = 0; x < tileArray.GetLength(0); x++)
+                    {
+                        for (int y = 0; y < tileArray.GetLength(1); y++)
                         {
-                            tileArray[x, y] = new Tile(TextureManager.openDoorTex, doorTilePos, true);
+                            if (tileArray[x, y] != null && tileArray[x, y].tileTex == TextureManager.doorTex)
+                            {
+                                tileArray[x, y] = new Tile(TextureManager.openDoorTex, doorTilePos, true);
+                            }
                         }
                     }
                 }
             }
- 
+            
+            if(gameState == GameState.GameOver)
+            {
+                WriteScoreToFile(@"ScoreLeaderboard.txt");
+            }
+
 
             base.Update(gameTime);
         }
@@ -235,21 +339,32 @@ namespace Zelda
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             _spriteBatch.Begin();
-            foreach (Tile tile in tileArray)
+
+            if(gameState == GameState.Starting)
             {
-                if (tile != null)
-                {
-                    tile.Draw(_spriteBatch);
-                }
+                Vector2 startSpriteFontPos = new Vector2((int) windowWidthStatic /2, (int) windowHeightStatic / 2);
+                _spriteBatch.DrawString(startSpriteFont, "Press Enter to Start", startSpriteFontPos, Color.Black);
             }
 
-            foreach (Enemy ene in enemyList)
+            if(gameState == GameState.Playing)
             {
-                ene.Draw(_spriteBatch);
+                foreach (Tile tile in tileArray)
+                {
+                    if (tile != null)
+                    {
+                        tile.Draw(_spriteBatch);
+                    }
+                }
+
+                foreach (Enemy ene in enemyList)
+                {
+                    ene.Draw(_spriteBatch);
+                }
+                player.Draw(_spriteBatch);
+                key.Draw(_spriteBatch);
+                zeldaThePrincess.Draw(_spriteBatch);
             }
-            player.Draw(_spriteBatch);
-            key.Draw(_spriteBatch);
-            zeldaThePrincess.Draw(_spriteBatch);
+            
             _spriteBatch.End();
 
             base.Draw(gameTime);
