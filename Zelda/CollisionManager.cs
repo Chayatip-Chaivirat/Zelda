@@ -64,7 +64,7 @@ namespace Zelda
                     ene.attackCoolDown = 0f; //reset cooldown
                 }
 
-                if(player.attackHitbox.Intersects(ene.enemyHitbox))
+                if(player.playerHitbox.Intersects(ene.enemyHitbox))
                 {
                     if(!player.attacking && ene.attackCoolDown <= 0f)
                     {

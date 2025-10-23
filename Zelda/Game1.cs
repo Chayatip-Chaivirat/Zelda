@@ -20,6 +20,7 @@ namespace Zelda
         string mapText;
         List<string> result;
         List<int> scoreList;
+        int totalTopScores = 3;
         public static int windowHeightStatic;
         public static int windowWidthStatic;
 
@@ -60,10 +61,6 @@ namespace Zelda
 
         //======== Gamestates: Starting ========
         SpriteFont startSpriteFont;
-
-        //======== Gamestates: Playing ========
-        float maxCooldown = 1.0f;
-        float currentCooldown = 0.0f;
 
         //======== Gamestates: GameOver ========
         public bool fileIsWritten = false;
@@ -124,8 +121,6 @@ namespace Zelda
 
         public void WriteScoreToFile(string fileName)
         {
-            //StreamWriter sw = new StreamWriter(fileName);
-            //List<int> scoreList = new List<int>();
             ReadFromFile(fileName);
             FileStream leaderboard = null;
                 try
@@ -143,7 +138,30 @@ namespace Zelda
                 }
         }
 
-       
+        public List<int> ReadLeaderboard(string fileName)
+        {
+            scoreList = new List<int>();
+
+            using (StreamReader sr = new StreamReader(fileName))
+            {
+                while (!sr.EndOfStream)
+                {
+                    string line = sr.ReadLine();
+                    if(int.TryParse(line, out int scores))
+                    {
+                        scoreList.Add(scores);
+                    }
+                }
+            }
+            return scoreList;
+        }
+
+        public List<int> TopScores(string fileName, int totalTopScores)
+        {
+            List<int> scores = ReadLeaderboard(fileName);
+            scores.Sort((a,b) => b.CompareTo(a)); //Highest value first
+            return scores.Take(totalTopScores).ToList();
+        }
         public void CreateMap(string fileName)
         {
             List<string> map = ReadFromFile(fileName);
@@ -383,8 +401,17 @@ namespace Zelda
 
             if(gameState == GameState.Starting)
             {
+                List<int> highScore = TopScores(@"ScoreLeaderboard.txt", totalTopScores);
                 Vector2 startSpriteFontPos = new Vector2((int) windowWidthStatic /2, (int) windowHeightStatic / 2);
                 _spriteBatch.DrawString(startSpriteFont, "Press Enter to Start", startSpriteFontPos, Color.Black);
+
+                Vector2 leaderboardPos = new Vector2(30, 100);
+                _spriteBatch.DrawString(startSpriteFont, "Leaderboard: ",leaderboardPos, Color.Black);
+                for(int i = 0; i < totalTopScores; i++) //The highest scores
+                {
+                    Vector2 highScorePos = new Vector2(30, 150 +(i+1)*50);
+                    _spriteBatch.DrawString(startSpriteFont,$"{ i +1}. {highScore[i]}", highScorePos, Color.Black);
+                }
             }
 
             if(gameState == GameState.Playing)
