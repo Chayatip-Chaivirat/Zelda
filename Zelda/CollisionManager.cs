@@ -16,18 +16,24 @@ namespace Zelda
         Enemy enemy;
         Key key;
         EndGoal zelda;
-        public static void PlayerEnemyCollision(Player player)
+        public static List<Enemy> PlayerAttackingEnemyCollision(Player player)
         {
             List<Enemy> removedEnemyList = new List<Enemy>();
             foreach (Enemy ene in Game1.enemyList)
             {
-                if (player.playerHitbox.Intersects(ene.enemyHitbox))
+                if (player.attackHitbox.Intersects(ene.enemyHitbox))
                 {
-                    if (player.attacking == false) //If player intersects with enemy without attacking
-                    {
-                        Game1.score -= 10;
-                    }
-                    else //If player intersects with enemy and is attacking
+                    //if (player.attacking == false) //If player intersects with enemy without attacking
+                    //{
+                    //    Game1.score -= 10;
+                    //    player.lives -= 1;
+                    //}
+                    //else //If player intersects with enemy and is attacking
+                    //{
+                    //    Game1.score += 100;
+                    //    removedEnemyList.Add(ene);
+                    //}
+                    if (player.attacking)
                     {
                         Game1.score += 100;
                         removedEnemyList.Add(ene);
@@ -37,6 +43,37 @@ namespace Zelda
             foreach (Enemy ene in removedEnemyList)
             {
                 Game1.enemyList.Remove(ene);
+            }
+            return removedEnemyList;
+        }
+
+        public static void PlayerTakingDamageFromEnemy(Player player, GameTime gameTime, List<Enemy> removedEnemyList)
+        {
+            float enemyInternalCoolDown = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            foreach (Enemy ene in Game1.enemyList)
+            {
+                // Skips this method for the enemy killed
+                if(removedEnemyList.Contains(ene))
+                {
+                    continue;
+                }
+
+                ene.attackCoolDown -= enemyInternalCoolDown;
+                if(ene.attackCoolDown < 0f)
+                {
+                    ene.attackCoolDown = 0f; //reset cooldown
+                }
+
+                if(player.attackHitbox.Intersects(ene.enemyHitbox))
+                {
+                    if(!player.attacking && ene.attackCoolDown <= 0f)
+                    {
+                        player.lives -= 1;
+                        Game1.score -= 10;
+                        ene.attackCoolDown = 1.0f;
+                    }
+
+                }
             }
         }
 

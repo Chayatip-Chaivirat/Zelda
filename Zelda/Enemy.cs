@@ -21,6 +21,7 @@ namespace Zelda
         public Vector2 enemyDirection;
         public Rectangle enemySourceRec;
         public bool movementUp;
+        public float attackCoolDown = 0f;
 
         public Enemy(Texture2D enemyTex, Vector2 position, bool movementUp)
         {

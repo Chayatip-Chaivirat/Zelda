@@ -9,6 +9,7 @@ using static System.Net.Mime.MediaTypeNames;
 using System.Linq;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Taskbar;
 using System.Runtime.Intrinsics;
+using System.Threading;
 
 namespace Zelda
 {
@@ -57,8 +58,12 @@ namespace Zelda
         //======== Gamestates ========
         static GameState gameState;
 
-        //======== Gamestates: starting ========
+        //======== Gamestates: Starting ========
         SpriteFont startSpriteFont;
+
+        //======== Gamestates: Playing ========
+        float maxCooldown = 1.0f;
+        float currentCooldown = 0.0f;
 
         //======== Gamestates: GameOver ========
         public bool fileIsWritten = false;
@@ -303,9 +308,28 @@ namespace Zelda
             if(gameState == GameState.Playing)
             {
                 player.Update(gameTime);
-                CollisionManager.PlayerEnemyCollision(player);
+                var defeatedEnemy = CollisionManager.PlayerAttackingEnemyCollision(player);
+                bool playerKilledEnemy = defeatedEnemy.Count > 0;
+                // If player didn't kill an enemy => player taking damage
+                if(!playerKilledEnemy)
+                {
+                    CollisionManager.PlayerTakingDamageFromEnemy(player, gameTime, defeatedEnemy);
+                }
+
+
                 CollisionManager.PlayerKey(player, key);
                 CollisionManager.PlayerEndGoal(player, zeldaThePrincess);
+
+                //Cooldown for CollisionManager.PlayerKey
+                //float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                //currentCooldown += deltaTime;
+                //if(currentCooldown >= maxCooldown)
+                //{
+                //    CollisionManager.PlayerEnemyCollision(player, gameTime);
+                //    currentCooldown = 0f;
+                //}
+
                 foreach (Enemy ene in enemyList)
                 {
                     if (ene.movementUp)
@@ -331,7 +355,7 @@ namespace Zelda
                         }
                     }
                 }
-                if (zeldaThePrincess.acheivedEndGoal)
+                if (zeldaThePrincess.acheivedEndGoal || player.lives == 0)
                 {
                     gameState = GameState.GameOver;
                 }
@@ -382,7 +406,9 @@ namespace Zelda
                 zeldaThePrincess.Draw(_spriteBatch);
 
                 Vector2 scorePos = new Vector2((int) windowWidthStatic/2, 1040);
+                Vector2 livesPos = new Vector2(50, 1040);
                 _spriteBatch.DrawString(scoreSpriteFont, "Score: " + score, scorePos, Color.Black);
+                _spriteBatch.DrawString(scoreSpriteFont, "Lives: " + player.lives, livesPos, Color.Black);
             }
             if(gameState == GameState.GameOver)
             {
