@@ -30,7 +30,7 @@ namespace Zelda
         public static Texture2D doorTex;
         public static Texture2D openDoorTex;
 
-        //===== Zelda the Princess =====
+        //===== End Goal =====
         public static Texture2D zeldaTex;
 
         public static void Textures(ContentManager content)

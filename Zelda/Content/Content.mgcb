@@ -170,6 +170,13 @@
 /processorParam:TextureFormat=Color
 /build:running_anim.png
 
+#begin ScoreFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:ScoreFont.spritefont
+
 #begin skelett_anim.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -205,6 +212,13 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:soil.png
+
+#begin Start.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Start.spritefont
 
 #begin stonefloor.png
 /importer:TextureImporter

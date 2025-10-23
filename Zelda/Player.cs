@@ -14,7 +14,8 @@ namespace Zelda
         public Vector2 position;
         public Rectangle playerSourceRec;
         public Rectangle playerHitbox;
-        public int lives = 10;
+        public Rectangle attackHitbox;
+        public int lives = 3;
         public Vector2 playerDirection;
         public float speed;
         public bool playerMoving;
@@ -35,7 +36,7 @@ namespace Zelda
         }
         public void Update(GameTime gametime)
         {
-            KeyPlayerReader.Update();
+            //KeyPlayerReader.Update();
             attacking = false;
 
             if (!playerMoving)
@@ -80,6 +81,7 @@ namespace Zelda
                     playerMoving = false;
                 }
             }
+            UpdateHitbox();
         }
 
         public void ChangeDirection(Vector2 direction)
@@ -97,6 +99,38 @@ namespace Zelda
         {
             playerSourceRec = new Rectangle(0,118,39,41); //start the attack animation from here
             return attacking = true;
+        }
+
+        public void UpdateHitbox()
+        {
+            if(!attacking)
+            {
+                attackHitbox = Rectangle.Empty;
+                return; //If not attacking, don't do anything
+            }
+
+            int attackHitboxSize = (int) (Game1.tileSize); 
+
+            //The attack-hitbox should face different direction depending on player's direction
+            if(playerDirection.X == 1) //Right
+            {
+                attackHitbox = new Rectangle((int) position.X + playerHitbox.Width, (int) position.Y, attackHitboxSize, attackHitboxSize);
+            }
+
+            if(playerDirection.X == -1) //Left
+            {
+                attackHitbox = new Rectangle((int) position.X - attackHitboxSize, (int)position.Y, attackHitboxSize, attackHitboxSize);
+            }
+
+            if(playerDirection.Y == 1) //Down
+            {
+                attackHitbox = new Rectangle((int)position.X, (int)position.Y + playerHitbox.Height, attackHitboxSize, attackHitboxSize);
+            }
+
+            if(playerDirection.Y == -1) //Up
+            {
+                attackHitbox = new Rectangle((int)position.X, (int)position.Y - attackHitboxSize, attackHitboxSize, attackHitboxSize);
+            }
         }
         public void Draw(SpriteBatch spriteBatch)
         {

@@ -21,6 +21,7 @@ namespace Zelda
         public Vector2 enemyDirection;
         public Rectangle enemySourceRec;
         public bool movementUp;
+        public float attackCoolDown = 0f;
 
         public Enemy(Texture2D enemyTex, Vector2 position, bool movementUp)
         {
@@ -28,7 +29,7 @@ namespace Zelda
             this.position = position;
             this.movementUp = movementUp;
             enemySourceRec = new Rectangle(0, 0, 40, 40);
-            enemyHitbox = new Rectangle((int)position.X, (int)position.Y, 40,40);
+            enemyHitbox = new Rectangle((int)position.X, (int)position.Y, 35,35);
 
             if (!movementUp)
             {

@@ -15,20 +15,27 @@ namespace Zelda
         Player player;
         Enemy enemy;
         Key key;
-        public static void PlayerEnemyCollision(Player player)
+        EndGoal zelda;
+        public static List<Enemy> PlayerAttackingEnemyCollision(Player player)
         {
             List<Enemy> removedEnemyList = new List<Enemy>();
             foreach (Enemy ene in Game1.enemyList)
             {
-                if (player.playerHitbox.Intersects(ene.enemyHitbox))
+                if (player.attackHitbox.Intersects(ene.enemyHitbox))
                 {
-                    if (player.attacking == false) //If player intersects with enemy without attacking
+                    //if (player.attacking == false) //If player intersects with enemy without attacking
+                    //{
+                    //    Game1.score -= 10;
+                    //    player.lives -= 1;
+                    //}
+                    //else //If player intersects with enemy and is attacking
+                    //{
+                    //    Game1.score += 100;
+                    //    removedEnemyList.Add(ene);
+                    //}
+                    if (player.attacking)
                     {
-                        player.lives -= 1;
-                    }
-                    else //If player intersects with enemy and is attacking
-                    {
-                        Game1.score += 1;
+                        Game1.score += 100;
                         removedEnemyList.Add(ene);
                     }
                 }
@@ -37,25 +44,37 @@ namespace Zelda
             {
                 Game1.enemyList.Remove(ene);
             }
+            return removedEnemyList;
+        }
 
-            //Game1.enemyList.RemoveAll(ene =>
-            //{
-            //    if (player.playerHitbox.Intersects(ene.enemyHitbox))
-            //    {
-            //        if (player.attacking == false) //If player intersects with enemy without attacking
-            //        {
-            //            player.lives -= 1;
-            //            return false;
-            //        }
-            //        else //If player intersects with enemy and is attacking
-            //        {
-            //            Game1.score += 1;
-            //            removedEnemyList.Add(ene);
-            //            return true;
-            //        }
-            //    }
-            //    return false;
-            //});
+        public static void PlayerTakingDamageFromEnemy(Player player, GameTime gameTime, List<Enemy> removedEnemyList)
+        {
+            float enemyInternalCoolDown = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            foreach (Enemy ene in Game1.enemyList)
+            {
+                // Skips this method for the enemy killed
+                if(removedEnemyList.Contains(ene))
+                {
+                    continue;
+                }
+
+                ene.attackCoolDown -= enemyInternalCoolDown;
+                if(ene.attackCoolDown < 0f)
+                {
+                    ene.attackCoolDown = 0f; //reset cooldown
+                }
+
+                if(player.playerHitbox.Intersects(ene.enemyHitbox))
+                {
+                    if(!player.attacking && ene.attackCoolDown <= 0f)
+                    {
+                        player.lives -= 1;
+                        Game1.score -= 10;
+                        ene.attackCoolDown = 1.0f;
+                    }
+
+                }
+            }
         }
 
         public static void PlayerKey(Player player, Key key)
@@ -70,6 +89,15 @@ namespace Zelda
                 key.keyPos.Y = player.position.Y -1;
 
                 key.keyHitbox = new Rectangle( (int)key.keyPos.X, (int)key.keyPos.Y, Game1.tileSize, Game1.tileSize);
+            }
+        }
+
+        public static void PlayerEndGoal(Player player, EndGoal zelda)
+        {
+            if (player.playerHitbox.Intersects(zelda.goalHitBox))
+            {
+                zelda.acheivedEndGoal = true;
+                Game1.score += 1000;
             }
         }
         
