@@ -270,51 +270,6 @@ namespace Zelda
                 Exit();
             KeyPlayerReader.Update();
 
-            //switch (gameState)
-            //{
-            //    case GameState.Starting:
-            //        if (KeyPlayerReader.KeyPressed(Keys.Enter))
-            //        {
-
-            //        }
-            //        break;
-
-            //    case GameState.Playing:
-            //        player.Update(gameTime);
-            //        CollisionManager.PlayerEnemyCollision(player);
-            //        CollisionManager.PlayerKey(player, key);
-            //        foreach (Enemy ene in enemyList)
-            //        {
-            //            if(ene.movementUp)
-            //            {
-            //                ene.UpDownMovement();
-            //            }
-            //            else
-            //            {
-            //                ene.LeftRightMovement();
-            //            }
-            //        }
-
-            //        if(player.keyRetrieved) //if player retrived the key => open the door
-            //        {
-            //            for (int x = 0; x < tileArray.GetLength(0); x++)
-            //            {
-            //                for(int y = 0; y < tileArray.GetLength(1); y++)
-            //                {
-            //                    if (tileArray[x,y] != null && tileArray[x,y].tileTex == TextureManager.doorTex)
-            //                    {
-            //                        tileArray[x, y] = new Tile(TextureManager.openDoorTex, doorTilePos, true);
-            //                    }
-            //                }
-            //            }
-            //        }
- 
-            //        break;
-            //    case GameState.GameOver:
-            //        WriteScoreToFile(@"ScoreLeaderboard.txt");
-            //        break;
-            //}
-
             if (gameState == GameState.Starting)
             {
                 if(KeyPlayerReader.KeyPressed(Keys.Enter))
@@ -337,16 +292,6 @@ namespace Zelda
 
                 CollisionManager.PlayerKey(player, key);
                 CollisionManager.PlayerEndGoal(player, zeldaThePrincess);
-
-                //Cooldown for CollisionManager.PlayerKey
-                //float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-                //currentCooldown += deltaTime;
-                //if(currentCooldown >= maxCooldown)
-                //{
-                //    CollisionManager.PlayerEnemyCollision(player, gameTime);
-                //    currentCooldown = 0f;
-                //}
 
                 foreach (Enemy ene in enemyList)
                 {

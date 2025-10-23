@@ -23,16 +23,6 @@ namespace Zelda
             {
                 if (player.attackHitbox.Intersects(ene.enemyHitbox))
                 {
-                    //if (player.attacking == false) //If player intersects with enemy without attacking
-                    //{
-                    //    Game1.score -= 10;
-                    //    player.lives -= 1;
-                    //}
-                    //else //If player intersects with enemy and is attacking
-                    //{
-                    //    Game1.score += 100;
-                    //    removedEnemyList.Add(ene);
-                    //}
                     if (player.attacking)
                     {
                         Game1.score += 100;

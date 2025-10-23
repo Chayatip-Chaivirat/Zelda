@@ -40,54 +40,6 @@ namespace Zelda
                 speed = 1;
             }
         }
-
-        //public void Movement(bool movementUp) // Doesn't work
-        //{
-        //    position.Y += speed * movementDirection;
-        //    position.X += speed * movementDirection;
-        //    enemySourceRec.X = (int)position.X;
-        //    enemySourceRec.Y = (int)position.Y;
-
-        //    if (movementUp)
-        //    {
-        //        Vector2 enemyPositionY = new Vector2(position.X, enemySourceRec.Top);
-        //        if (enemySourceRec.Top == 0 || enemySourceRec.Bottom == Game1.windowWidthStatic)
-        //        {
-        //            movementDirection *= -1;
-        //        }
-
-        //        if (!Game1.GetTileAtPosition(enemyPositionY)) //When walkable = true
-        //        {
-        //            movementDirection *= -1;
-        //        }
-
-        //        Vector2 enemyPositionYBottom = new Vector2(position.X, enemySourceRec.Bottom);
-        //        if (!Game1.GetTileAtPosition(enemyPositionYBottom))
-        //        {
-        //            movementDirection *= -1;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        Vector2 enemyPositionX = new Vector2(enemySourceRec.Left, position.Y);
-        //        if (enemySourceRec.Right == Game1.windowWidthStatic || enemySourceRec.Left == 0)
-        //        {
-        //            movementDirection *= -1;
-        //        }
-
-        //        if (!Game1.GetTileAtPosition(enemyPositionX)) //When walkable = true
-        //        {
-        //            movementDirection *= -1;
-        //        }
-
-        //        Vector2 enemyPositionXRight = new Vector2(enemySourceRec.Right, position.Y);
-        //        if (!Game1.GetTileAtPosition(enemyPositionXRight))
-        //        {
-        //            movementDirection *= -1;
-        //        }
-        //    }
-           
-        //}
         public void UpDownMovement()
         {
             position.Y += speed * movementDirection;
